@@ -9,9 +9,23 @@ use num_traits::checked_pow;
 use num_traits::{AsPrimitive, PrimInt, WrappingAdd, WrappingMul};
 use test::{black_box, Bencher};
 
-trait BenchInteger: Integer + PrimInt + WrappingAdd + WrappingMul + 'static {}
+trait BenchInteger:
+    Integer
+    + PrimInt
+    + WrappingAdd<WrappingOutput = Self>
+    + WrappingMul<WrappingOutput = Self>
+    + 'static
+{
+}
 
-impl<T> BenchInteger for T where T: Integer + PrimInt + WrappingAdd + WrappingMul + 'static {}
+impl<T> BenchInteger for T where
+    T: Integer
+        + PrimInt
+        + WrappingAdd<WrappingOutput = T>
+        + WrappingMul<WrappingOutput = T>
+        + 'static
+{
+}
 
 fn bench<T, F>(b: &mut Bencher, v: &[T], f: F, n: u32)
 where
@@ -55,7 +69,7 @@ where
     // (but we're applying it to arbitrary sizes)
     const LCG_A: u32 = 1664525;
     const LCG_C: u32 = 1013904223;
-    x.wrapping_mul(&LCG_A.as_()).wrapping_add(&LCG_C.as_())
+    x.wrapping_mul(LCG_A.as_()).wrapping_add(LCG_C.as_())
 }
 
 fn bench_rand<T, F>(b: &mut Bencher, f: F, n: u32)

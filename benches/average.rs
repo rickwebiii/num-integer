@@ -12,9 +12,23 @@ use test::{black_box, Bencher};
 
 // --- Utilities for RNG ----------------------------------------------------
 
-trait BenchInteger: Integer + PrimInt + WrappingAdd + WrappingMul + 'static {}
+trait BenchInteger:
+    Integer
+    + PrimInt
+    + WrappingAdd<WrappingOutput = Self>
+    + WrappingMul<WrappingOutput = Self>
+    + 'static
+{
+}
 
-impl<T> BenchInteger for T where T: Integer + PrimInt + WrappingAdd + WrappingMul + 'static {}
+impl<T> BenchInteger for T where
+    T: Integer
+        + PrimInt
+        + WrappingAdd<WrappingOutput = T>
+        + WrappingMul<WrappingOutput = T>
+        + 'static
+{
+}
 
 // Simple PRNG so we don't have to worry about rand compatibility
 fn lcg<T>(x: T) -> T
@@ -26,7 +40,7 @@ where
     // (but we're applying it to arbitrary sizes)
     const LCG_A: u32 = 1664525;
     const LCG_C: u32 = 1013904223;
-    x.wrapping_mul(&LCG_A.as_()).wrapping_add(&LCG_C.as_())
+    x.wrapping_mul(LCG_A.as_()).wrapping_add(LCG_C.as_())
 }
 
 // --- Alt. Implementations -------------------------------------------------

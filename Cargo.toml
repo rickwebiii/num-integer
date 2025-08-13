@@ -18,7 +18,7 @@ rust-version = "1.31"
 features = ["std"]
 
 [dependencies.num-traits]
-version = "0.2.11"
+version = "0.3.0"
 default-features = false
 features = ["i128"]
 
@@ -28,3 +28,6 @@ std = ["num-traits/std"]
 
 # vestigial features, now always in effect
 i128 = []
+
+[patch.crates-io]
+num-traits = { git = "https://github.com/rickwebiii/num-traits.git", branch = "rweber/wrapping" }
